@@ -1,0 +1,47 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "portrait",
+      "description": "Professional portrait of Siddhant Sahoo",
+      "imageUrl": "https://picsum.photos/seed/siddhant/600/800",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "project-powerbi",
+      "description": "PowerBI Dashboard Thumbnail",
+      "imageUrl": "https://picsum.photos/seed/p1/800/600",
+      "imageHint": "data dashboard"
+    },
+    {
+      "id": "project-azure",
+      "description": "Azure Data Engineering Pipeline",
+      "imageUrl": "https://picsum.photos/seed/p2/800/600",
+      "imageHint": "cloud infrastructure"
+    },
+    {
+      "id": "project-airflow",
+      "description": "Airflow DAG visualization",
+      "imageUrl": "https://picsum.photos/seed/p3/800/600",
+      "imageHint": "workflow automation"
+    },
+    {
+      "id": "project-rag",
+      "description": "RAG Chain visualization",
+      "imageUrl": "https://picsum.photos/seed/p4/800/600",
+      "imageHint": "artificial intelligence"
+    },
+    {
+      "id": "project-pubmed",
+      "description": "PubMed Search Engine",
+      "imageUrl": "https://picsum.photos/seed/p5/800/600",
+      "imageHint": "search engine"
+    },
+    {
+      "id": "project-apple",
+      "description": "Apple Sales Analysis",
+      "imageUrl": "https://picsum.photos/seed/p6/800/600",
+      "imageHint": "sales analysis"
+    }
+  ]
+}
