@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
@@ -11,37 +11,33 @@ import { Projects } from '@/components/Projects';
 import { Testimonials } from '@/components/Testimonials';
 import { CTA } from '@/components/CTA';
 import { Footer } from '@/components/Footer';
+import { cn } from '@/lib/utils';
 
 export default function Portfolio() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Simulated smooth progress for aesthetic during image sequence load
-  useEffect(() => {
-    if (!isLoading) return;
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 99) return prev;
-        return prev + 1;
-      });
-    }, 50);
-    return () => clearInterval(interval);
-  }, [isLoading]);
-
-  const handleHeroReady = () => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000); // Small buffer for reveal
+  const handleProgress = (progress: number) => {
+    setLoadProgress(progress);
+    if (progress === 100) {
+      // Small delay for smooth transition after assets are ready
+      setTimeout(() => setIsLoaded(true), 800);
+    }
   };
 
   return (
     <main className="relative bg-background">
-      {isLoading && <LoadingScreen progress={progress} />}
+      {/* Loading Screen Overlay */}
+      {!isLoaded && <LoadingScreen progress={loadProgress} />}
       
-      {!isLoading && (
-        <div className="animate-fade-in">
-          <Navbar />
-          <Hero onLoaded={handleHeroReady} />
+      {/* Main Content - Always mounted but hidden until loaded to preserve state */}
+      <div className={cn(
+        "transition-opacity duration-1000",
+        isLoaded ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}>
+        <Navbar />
+        <Hero onProgress={handleProgress} />
+        <div id="content-sections">
           <About />
           <Experience />
           <Projects />
@@ -49,11 +45,6 @@ export default function Portfolio() {
           <CTA />
           <Footer />
         </div>
-      )}
-      
-      {/* Fallback for pre-load context */}
-      <div className="invisible fixed inset-0 pointer-events-none overflow-hidden h-0">
-        <Hero onLoaded={handleHeroReady} />
       </div>
     </main>
   );

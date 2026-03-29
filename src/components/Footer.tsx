@@ -20,7 +20,7 @@ export function Footer() {
               SS<span className="text-primary">.</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Engineering high-impact data solutions and AI systems for the next generation of business intelligence.
+              Engineering high-impact data solutions and AI systems for the next generation of intelligence.
             </p>
           </div>
           

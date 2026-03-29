@@ -7,50 +7,53 @@ import { Github, Linkedin, Twitter } from 'lucide-react';
 const TOTAL_FRAMES = 74;
 const FRAME_BASE_URL = "https://mqpfmkdefcbakrzdzspq.supabase.co/storage/v1/object/public/Webp%20Sequence/frame_";
 
-export function Hero({ onLoaded }: { onLoaded: () => void }) {
+interface HeroProps {
+  onProgress: (progress: number) => void;
+}
+
+export function Hero({ onProgress }: HeroProps) {
   const [currentFrame, setCurrentFrame] = useState(1);
   const [loadedCount, setLoadedCount] = useState(0);
   const framesCache = useRef<HTMLImageElement[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isPreloaded, setIsPreloaded] = useState(false);
+  const loadingStarted = useRef(false);
 
+  // Preload frames
   useEffect(() => {
+    if (loadingStarted.current) return;
+    loadingStarted.current = true;
+
     let count = 0;
-    
     const handleFrameLoad = () => {
       count++;
       setLoadedCount(count);
-      if (count === TOTAL_FRAMES) {
-        setIsPreloaded(true);
-        onLoaded?.();
-      }
+      onProgress((count / TOTAL_FRAMES) * 100);
     };
 
-    const preloadImages = () => {
-      for (let i = 1; i <= TOTAL_FRAMES; i++) {
-        if (framesCache.current[i - 1]) continue;
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      const frameNum = i.toString().padStart(4, '0');
+      img.src = `${FRAME_BASE_URL}${frameNum}.webp`;
+      
+      img.onload = handleFrameLoad;
+      img.onerror = handleFrameLoad; // Count failed frames to prevent hanging
+      framesCache.current[i - 1] = img;
+    }
+  }, [onProgress]);
 
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        const frameNum = i.toString().padStart(4, '0');
-        img.src = `${FRAME_BASE_URL}${frameNum}.webp`;
-        
-        img.onload = handleFrameLoad;
-        img.onerror = handleFrameLoad; // Count broken frames to avoid hanging
-        framesCache.current[i - 1] = img;
-      }
-    };
-    
-    preloadImages();
-  }, [onLoaded]);
-
+  // Handle Scroll to update frame
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
-      const scrollProgress = Math.abs(rect.top) / (rect.height - window.innerHeight);
-      const frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.floor(scrollProgress * TOTAL_FRAMES)));
+      const scrollHeight = rect.height - window.innerHeight;
+      
+      if (scrollHeight <= 0) return;
+
+      const scrollProgress = Math.abs(rect.top) / scrollHeight;
+      const frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.floor(scrollProgress * TOTAL_FRAMES) + 1));
       setCurrentFrame(frameIndex);
     };
 
@@ -58,21 +61,26 @@ export function Hero({ onLoaded }: { onLoaded: () => void }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Redraw when either the frame index changes OR a new frame finishes loading
+  // Draw current frame to canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     const frame = framesCache.current[currentFrame - 1];
     
-    // Ensure image is actually loaded and not broken before drawing
+    // Check if frame exists and is ready
     if (frame && frame.complete && frame.naturalWidth > 0) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        // Clear canvas and draw new frame
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    } else if (frame) {
+      // Fallback: If current frame isn't ready, try to draw it as soon as it loads
+      frame.onload = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-      }
+      };
     }
   }, [currentFrame, loadedCount]);
 
@@ -81,10 +89,9 @@ export function Hero({ onLoaded }: { onLoaded: () => void }) {
       <div className="parallax-sticky rounded-b-[4rem] md:rounded-b-[8rem] shadow-2xl overflow-hidden bg-black">
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          className="absolute inset-0 w-full h-full object-cover"
           width={1920}
           height={1080}
-          style={{ opacity: loadedCount > 0 ? 1 : 0 }}
         />
 
         <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/80" />
