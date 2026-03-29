@@ -6,7 +6,6 @@ import { Github, Linkedin, Twitter } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 const TOTAL_FRAMES = 74;
-const PRELOAD_RADIUS = 10;
 const FRAME_BASE_URL = "https://mqpfmkdefcbakrzdzspq.supabase.co/storage/v1/object/public/Webp%20Sequence/frame_";
 
 export function Hero({ onLoaded }: { onLoaded: () => void }) {
@@ -56,8 +55,12 @@ export function Hero({ onLoaded }: { onLoaded: () => void }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const frame = framesCache.current[currentFrame - 1];
-    if (canvas && frame?.complete) {
+    
+    // Check if image is complete AND has a valid naturalWidth (not broken)
+    if (frame?.complete && frame.naturalWidth > 0) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
