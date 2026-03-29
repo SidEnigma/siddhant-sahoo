@@ -20,10 +20,12 @@ export function CTA() {
         </p>
         
         <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-          <Button size="lg" className="h-16 px-12 text-lg rounded-full font-headline font-bold bg-primary hover:bg-primary/80 text-white shadow-[0_0_30px_rgba(0,179,255,0.4)]">
-            Send Message <MessageSquare className="ml-2 w-5 h-5" />
+          <Button size="lg" asChild className="h-16 px-12 text-lg rounded-full font-headline font-bold bg-primary hover:bg-primary/80 text-white shadow-[0_0_30px_rgba(0,179,255,0.4)]">
+            <a href="mailto:sahoo.siddhant6@gmail.com">
+              Send Email <MessageSquare className="ml-2 w-5 h-5" />
+            </a>
           </Button>
-          <a href="mailto:contact@siddhant.ai" className="text-white font-headline font-bold hover:text-primary transition-colors flex items-center group text-lg">
+          <a href="https://www.linkedin.com/in/sahoo-siddhant/" className="text-white font-headline font-bold hover:text-primary transition-colors flex items-center group text-lg">
             Shoot a message for a coffee chat
             <span className="ml-2 group-hover:translate-x-2 transition-transform">→</span>
           </a>

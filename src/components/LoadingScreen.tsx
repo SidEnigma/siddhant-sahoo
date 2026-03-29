@@ -18,7 +18,7 @@ export function LoadingScreen({ progress }: LoadingScreenProps) {
       
       <div className="w-full max-w-md space-y-4">
         <div className="flex justify-between items-end">
-          <span className="text-xs font-headline text-muted-foreground uppercase tracking-widest">Initializing Cinematic Experience</span>
+          <span className="text-xs font-headline text-muted-foreground uppercase tracking-widest">Initializing Visual Experience</span>
           <span className="text-lg font-headline font-bold text-primary">{Math.round(progress)}%</span>
         </div>
         <Progress value={progress} className="h-1 bg-muted" />

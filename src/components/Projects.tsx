@@ -49,7 +49,7 @@ export function Projects() {
     <section id="projects" className="py-24 px-6 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-6xl font-headline font-bold tracking-tighter mb-6 underline decoration-primary underline-offset-8">Featured Work</h2>
+          <h2 className="text-6xl font-headline font-bold tracking-tighter mb-6 underline decoration-primary underline-offset-8">Featured Projects</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             A selection of projects focusing on data engineering, machine learning pipelines, and AI-driven applications.
           </p>

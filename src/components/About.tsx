@@ -32,10 +32,10 @@ export function About() {
           
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             {[
-              "𝐃𝐚𝐭𝐚 𝐖𝐚𝐫𝐞𝐡𝐨𝐮𝐬𝐢𝐧𝐠 & 𝐋𝐚𝐤𝐞𝐬",
-              "𝐃𝐢𝐬𝐭𝐫𝐢𝐛𝐮𝐭𝐞𝐝 Batch 𝐏𝐫𝐨𝐜𝐞𝐬𝐬𝐢𝐧𝐠",
-              "𝗗𝗮𝘁𝗮 𝗚𝗼𝘃𝗲𝗿𝗻𝗮𝗻𝗰𝗲",
-              "Artificial Intelligence"
+              "Data Warehousing and Data Lakes",
+              "Distributed Processing",
+              "Batch and Streaming Pipelines",
+              "Artificial Intelligence and Machine Learning"
             ].map((skill, i) => (
               <li key={i} className="flex items-center space-x-3 text-white/80 group">
                 <span className="w-2 h-2 rounded-full bg-primary group-hover:scale-150 transition-transform" />
