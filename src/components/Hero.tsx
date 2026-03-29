@@ -25,7 +25,7 @@ export function Hero({ onProgress }: HeroProps) {
     loadingStarted.current = true;
 
     let loadedCount = 0;
-    
+
     const reportProgress = () => {
       loadedCount++;
       onProgress((loadedCount / TOTAL_FRAMES) * 100);
@@ -36,18 +36,18 @@ export function Hero({ onProgress }: HeroProps) {
       // Use 2-digit padding as per the naming convention: 00, 01, ..., 73
       const frameNum = i.toString().padStart(2, '0');
       const url = `${FRAME_BASE_URL}${frameNum}${FRAME_SUFFIX}`;
-      
+
       img.onload = () => {
         framesCache.current.set(i, img);
         if (i === 0) setFirstFrameLoaded(true);
         reportProgress();
       };
-      
+
       img.onerror = () => {
         if (i === 0 || i === 14) {
           console.error(`Failed to load frame ${i}. Check if this URL is valid: ${url}`);
         }
-        reportProgress(); 
+        reportProgress();
       };
 
       img.src = url;
@@ -60,7 +60,7 @@ export function Hero({ onProgress }: HeroProps) {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const scrollHeight = rect.height - window.innerHeight;
-      
+
       if (scrollHeight <= 0) return;
 
       const scrollProgress = Math.max(0, Math.min(1, Math.abs(rect.top) / scrollHeight));
@@ -82,7 +82,7 @@ export function Hero({ onProgress }: HeroProps) {
     if (!ctx) return;
 
     const frame = framesCache.current.get(currentFrame);
-    
+
     // Safety check: only draw if image is loaded and not broken
     if (frame && frame.complete && frame.naturalWidth > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -147,7 +147,7 @@ export function Hero({ onProgress }: HeroProps) {
             <a href="https://www.linkedin.com/in/sahoo-siddhant" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
               <Linkedin className="w-5 h-5" />
             </a>
-            <a href="https://github.com/siddhant-sahoo" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
+            <a href="https://github.com/SidEnigma" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
               <Github className="w-5 h-5" />
             </a>
             <a href="https://x.com/Siddhant610" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
