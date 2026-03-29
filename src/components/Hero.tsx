@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -33,10 +32,10 @@ export function Hero({ onProgress }: HeroProps) {
 
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
+      // NOTE: Verify if your files use 4-digit padding (0001), 3-digit (001), or no padding (1)
       const frameNum = i.toString().padStart(4, '0');
       const url = `${FRAME_BASE_URL}${frameNum}.webp`;
       
-      // Set handlers BEFORE setting src to avoid race conditions
       img.onload = () => {
         framesCache.current.set(i, img);
         if (i === 1) setFirstFrameLoaded(true);
@@ -44,12 +43,13 @@ export function Hero({ onProgress }: HeroProps) {
       };
       
       img.onerror = () => {
-        console.error(`Failed to load frame ${i} from URL: ${url}`);
-        reportProgress(); // Still count to avoid progress hang
+        // If it fails, log the full URL once to help debugging
+        if (i === 1 || i === 14) {
+          console.error(`Failed to load frame ${i}. Check if this URL is valid: ${url}`);
+        }
+        reportProgress(); 
       };
 
-      // We remove crossOrigin for now as it can block loading if CORS headers are missing
-      // Since we are only drawing to canvas and not reading pixels, this is safer
       img.src = url;
     }
   }, [onProgress]);
@@ -63,10 +63,7 @@ export function Hero({ onProgress }: HeroProps) {
       
       if (scrollHeight <= 0) return;
 
-      // Calculate scroll progress (0 to 1)
       const scrollProgress = Math.max(0, Math.min(1, Math.abs(rect.top) / scrollHeight));
-      
-      // Map progress to frame index (1 to TOTAL_FRAMES)
       const frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.floor(scrollProgress * (TOTAL_FRAMES - 1)) + 1));
       setCurrentFrame(frameIndex);
     };
@@ -85,11 +82,12 @@ export function Hero({ onProgress }: HeroProps) {
 
     const frame = framesCache.current.get(currentFrame);
     
+    // Safety check: only draw if image is loaded and not broken
     if (frame && frame.complete && frame.naturalWidth > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
     } else {
-      // If requested frame isn't ready, try to draw the nearest previous one available
+      // Fallback: draw nearest available frame
       for (let i = currentFrame - 1; i >= 1; i--) {
         const prevFrame = framesCache.current.get(i);
         if (prevFrame && prevFrame.complete && prevFrame.naturalWidth > 0) {

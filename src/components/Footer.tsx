@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -50,7 +49,7 @@ export function Footer() {
               <a href="https://linkedin.com/in/siddhant-sahoo" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary transition-all">
                 <Linkedin className="w-5 h-5 text-white" />
               </a>
-              <a href="mailto:contact@siddhant.ai" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary transition-all">
+              <a href="mailto:sahoo.siddhant6@gmail.com" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary transition-all">
                 <Mail className="w-5 h-5 text-white" />
               </a>
             </div>
