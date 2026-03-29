@@ -14,7 +14,7 @@ export function Footer() {
   return (
     <footer className="bg-black py-20 px-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid md:grid-cols-3 gap-12 mb-16">
           <div className="md:col-span-1">
             <div className="font-headline font-bold text-3xl tracking-tighter text-white mb-6">
               SS<span className="text-primary">.</span>
@@ -30,14 +30,6 @@ export function Footer() {
               <li><a href="#about" className="hover:text-primary transition-colors">About</a></li>
               <li><a href="#experience" className="hover:text-primary transition-colors">Experience</a></li>
               <li><a href="#projects" className="hover:text-primary transition-colors">Projects</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-headline font-bold mb-6 uppercase tracking-widest text-xs">Legal</h4>
-            <ul className="space-y-4 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
             </ul>
           </div>
 
