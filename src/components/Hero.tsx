@@ -5,13 +5,14 @@ import { Github, Linkedin, Twitter } from 'lucide-react';
 
 const TOTAL_FRAMES = 74;
 const FRAME_BASE_URL = "https://mqpfmkdefcbakrzdzspq.supabase.co/storage/v1/object/public/Webp%20Sequence/frame_";
+const FRAME_SUFFIX = "_delay-0.041s.webp";
 
 interface HeroProps {
   onProgress: (progress: number) => void;
 }
 
 export function Hero({ onProgress }: HeroProps) {
-  const [currentFrame, setCurrentFrame] = useState(1);
+  const [currentFrame, setCurrentFrame] = useState(0);
   const [firstFrameLoaded, setFirstFrameLoaded] = useState(false);
   const framesCache = useRef<Map<number, HTMLImageElement>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,21 +31,20 @@ export function Hero({ onProgress }: HeroProps) {
       onProgress((loadedCount / TOTAL_FRAMES) * 100);
     };
 
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
-      // NOTE: Verify if your files use 4-digit padding (0001), 3-digit (001), or no padding (1)
-      const frameNum = i.toString().padStart(4, '0');
-      const url = `${FRAME_BASE_URL}${frameNum}.webp`;
+      // Use 2-digit padding as per the naming convention: 00, 01, ..., 73
+      const frameNum = i.toString().padStart(2, '0');
+      const url = `${FRAME_BASE_URL}${frameNum}${FRAME_SUFFIX}`;
       
       img.onload = () => {
         framesCache.current.set(i, img);
-        if (i === 1) setFirstFrameLoaded(true);
+        if (i === 0) setFirstFrameLoaded(true);
         reportProgress();
       };
       
       img.onerror = () => {
-        // If it fails, log the full URL once to help debugging
-        if (i === 1 || i === 14) {
+        if (i === 0 || i === 14) {
           console.error(`Failed to load frame ${i}. Check if this URL is valid: ${url}`);
         }
         reportProgress(); 
@@ -64,7 +64,8 @@ export function Hero({ onProgress }: HeroProps) {
       if (scrollHeight <= 0) return;
 
       const scrollProgress = Math.max(0, Math.min(1, Math.abs(rect.top) / scrollHeight));
-      const frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.floor(scrollProgress * (TOTAL_FRAMES - 1)) + 1));
+      // Map scroll progress to 0-73
+      const frameIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.floor(scrollProgress * (TOTAL_FRAMES - 1))));
       setCurrentFrame(frameIndex);
     };
 
@@ -88,7 +89,7 @@ export function Hero({ onProgress }: HeroProps) {
       ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
     } else {
       // Fallback: draw nearest available frame
-      for (let i = currentFrame - 1; i >= 1; i--) {
+      for (let i = currentFrame - 1; i >= 0; i--) {
         const prevFrame = framesCache.current.get(i);
         if (prevFrame && prevFrame.complete && prevFrame.naturalWidth > 0) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
