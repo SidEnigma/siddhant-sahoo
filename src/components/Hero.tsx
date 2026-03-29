@@ -3,37 +3,42 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Github, Linkedin, Twitter } from 'lucide-react';
-import { cn } from "@/lib/utils";
 
 const TOTAL_FRAMES = 74;
 const FRAME_BASE_URL = "https://mqpfmkdefcbakrzdzspq.supabase.co/storage/v1/object/public/Webp%20Sequence/frame_";
 
 export function Hero({ onLoaded }: { onLoaded: () => void }) {
   const [currentFrame, setCurrentFrame] = useState(1);
+  const [loadedCount, setLoadedCount] = useState(0);
   const framesCache = useRef<HTMLImageElement[]>([]);
-  const [isReady, setIsReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isPreloaded, setIsPreloaded] = useState(false);
 
   useEffect(() => {
-    let loadedCount = 0;
+    let count = 0;
     
     const handleFrameLoad = () => {
-      loadedCount++;
-      if (loadedCount === TOTAL_FRAMES) {
-        setIsReady(true);
-        onLoaded();
+      count++;
+      setLoadedCount(count);
+      if (count === TOTAL_FRAMES) {
+        setIsPreloaded(true);
+        onLoaded?.();
       }
     };
 
     const preloadImages = () => {
       for (let i = 1; i <= TOTAL_FRAMES; i++) {
+        if (framesCache.current[i - 1]) continue;
+
         const img = new Image();
+        img.crossOrigin = "anonymous";
         const frameNum = i.toString().padStart(4, '0');
         img.src = `${FRAME_BASE_URL}${frameNum}.webp`;
-        framesCache.current[i - 1] = img;
+        
         img.onload = handleFrameLoad;
-        img.onerror = handleFrameLoad; // Ensure we don't hang if an image fails
+        img.onerror = handleFrameLoad; // Count broken frames to avoid hanging
+        framesCache.current[i - 1] = img;
       }
     };
     
@@ -49,39 +54,38 @@ export function Hero({ onLoaded }: { onLoaded: () => void }) {
       setCurrentFrame(frameIndex);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Redraw when either the frame index changes OR a new frame finishes loading
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const frame = framesCache.current[currentFrame - 1];
     
-    // Check if image is complete AND has a valid naturalWidth (not broken)
-    if (frame?.complete && frame.naturalWidth > 0) {
+    // Ensure image is actually loaded and not broken before drawing
+    if (frame && frame.complete && frame.naturalWidth > 0) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
+        // Clear canvas and draw new frame
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
       }
     }
-  }, [currentFrame]);
-
-  if (!isReady) return null;
+  }, [currentFrame, loadedCount]);
 
   return (
     <section ref={containerRef} className="parallax-container relative">
-      <div className="parallax-sticky rounded-b-[4rem] md:rounded-b-[8rem] shadow-2xl">
-        <div className="absolute inset-0 bg-black">
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full object-cover"
-            width={1920}
-            height={1080}
-          />
-        </div>
+      <div className="parallax-sticky rounded-b-[4rem] md:rounded-b-[8rem] shadow-2xl overflow-hidden bg-black">
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          width={1920}
+          height={1080}
+          style={{ opacity: loadedCount > 0 ? 1 : 0 }}
+        />
 
         <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/60 via-transparent to-black/80" />
 
@@ -117,9 +121,15 @@ export function Hero({ onLoaded }: { onLoaded: () => void }) {
           </div>
 
           <div className="absolute bottom-12 left-0 right-0 flex justify-center space-x-8 pointer-events-auto">
-            <a href="https://www.linkedin.com/in/sahoo-siddhant" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors"><Linkedin className="w-5 h-5" /></a>
-            <a href="https://github.com/siddhant-sahoo" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors"><Github className="w-5 h-5" /></a>
-            <a href="https://x.com/Siddhant610" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors"><Twitter className="w-5 h-5" /></a>
+            <a href="https://www.linkedin.com/in/sahoo-siddhant" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
+              <Linkedin className="w-5 h-5" />
+            </a>
+            <a href="https://github.com/siddhant-sahoo" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
+              <Github className="w-5 h-5" />
+            </a>
+            <a href="https://x.com/Siddhant610" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-primary transition-colors">
+              <Twitter className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </div>
