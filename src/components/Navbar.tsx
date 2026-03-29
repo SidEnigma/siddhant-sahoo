@@ -22,6 +22,13 @@ export function Navbar() {
     { name: 'Contact', href: '#contact' },
   ];
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
       <div 
@@ -30,9 +37,12 @@ export function Navbar() {
           scrolled ? "py-3 max-w-2xl" : "py-4"
         )}
       >
-        <div className="font-headline font-bold text-xl tracking-tighter text-white">
+        <button 
+          onClick={scrollToTop}
+          className="font-headline font-bold text-xl tracking-tighter text-white hover:opacity-80 transition-opacity focus:outline-none"
+        >
           Siddhant <span className="text-primary">Sahoo</span>
-        </div>
+        </button>
         
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
