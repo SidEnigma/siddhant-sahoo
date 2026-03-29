@@ -13,8 +13,8 @@ interface HeroProps {
 
 export function Hero({ onProgress }: HeroProps) {
   const [currentFrame, setCurrentFrame] = useState(1);
-  const [loadedCount, setLoadedCount] = useState(0);
-  const framesCache = useRef<HTMLImageElement[]>([]);
+  const [firstFrameLoaded, setFirstFrameLoaded] = useState(false);
+  const framesCache = useRef<Map<number, HTMLImageElement>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const loadingStarted = useRef(false);
@@ -24,11 +24,11 @@ export function Hero({ onProgress }: HeroProps) {
     if (loadingStarted.current) return;
     loadingStarted.current = true;
 
-    let count = 0;
-    const handleFrameLoad = () => {
-      count++;
-      setLoadedCount(count);
-      onProgress((count / TOTAL_FRAMES) * 100);
+    let loadedCount = 0;
+    
+    const reportProgress = () => {
+      loadedCount++;
+      onProgress((loadedCount / TOTAL_FRAMES) * 100);
     };
 
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
@@ -37,13 +37,20 @@ export function Hero({ onProgress }: HeroProps) {
       const frameNum = i.toString().padStart(4, '0');
       img.src = `${FRAME_BASE_URL}${frameNum}.webp`;
       
-      img.onload = handleFrameLoad;
-      img.onerror = handleFrameLoad; // Count failed frames to prevent hanging
-      framesCache.current[i - 1] = img;
+      img.onload = () => {
+        framesCache.current.set(i, img);
+        if (i === 1) setFirstFrameLoaded(true);
+        reportProgress();
+      };
+      
+      img.onerror = () => {
+        console.error(`Failed to load frame ${i}`);
+        reportProgress(); // Still count to avoid progress hang
+      };
     }
   }, [onProgress]);
 
-  // Handle Scroll to update frame
+  // Handle Scroll to update current frame index
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
@@ -52,8 +59,11 @@ export function Hero({ onProgress }: HeroProps) {
       
       if (scrollHeight <= 0) return;
 
-      const scrollProgress = Math.abs(rect.top) / scrollHeight;
-      const frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.floor(scrollProgress * TOTAL_FRAMES) + 1));
+      // Calculate scroll progress (0 to 1)
+      const scrollProgress = Math.max(0, Math.min(1, Math.abs(rect.top) / scrollHeight));
+      
+      // Map progress to frame index (1 to TOTAL_FRAMES)
+      const frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, Math.floor(scrollProgress * (TOTAL_FRAMES - 1)) + 1));
       setCurrentFrame(frameIndex);
     };
 
@@ -61,7 +71,7 @@ export function Hero({ onProgress }: HeroProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Draw current frame to canvas
+  // Drawing Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -69,24 +79,27 @@ export function Hero({ onProgress }: HeroProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const frame = framesCache.current[currentFrame - 1];
+    const frame = framesCache.current.get(currentFrame);
     
-    // Check if frame exists and is ready
     if (frame && frame.complete && frame.naturalWidth > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-    } else if (frame) {
-      // Fallback: If current frame isn't ready, try to draw it as soon as it loads
-      frame.onload = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-      };
+    } else if (currentFrame !== 1) {
+      // If requested frame isn't ready, try to draw the nearest previous one available
+      for (let i = currentFrame - 1; i >= 1; i--) {
+        const prevFrame = framesCache.current.get(i);
+        if (prevFrame && prevFrame.complete && prevFrame.naturalWidth > 0) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(prevFrame, 0, 0, canvas.width, canvas.height);
+          break;
+        }
+      }
     }
-  }, [currentFrame, loadedCount]);
+  }, [currentFrame, firstFrameLoaded]);
 
   return (
     <section ref={containerRef} className="parallax-container relative">
-      <div className="parallax-sticky rounded-b-[4rem] md:rounded-b-[8rem] shadow-2xl overflow-hidden bg-black">
+      <div className="parallax-sticky rounded-b-[4rem] md:rounded-b-[8rem] shadow-2xl overflow-hidden bg-[#1A2226]">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full object-cover"
