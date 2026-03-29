@@ -1,10 +1,16 @@
 
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Mail } from 'lucide-react';
 
 export function Footer() {
+  const [currentYear, setCurrentYear] = useState<string>("");
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear().toString());
+  }, []);
+
   return (
     <footer className="bg-black py-20 px-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto">
@@ -53,7 +59,7 @@ export function Footer() {
         
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-            © {new Date().getFullYear()} Siddhant Sahoo. Built with cinematic precision.
+            © {currentYear || '...'} Siddhant Sahoo. Built with cinematic precision.
           </p>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
