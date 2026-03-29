@@ -10,38 +10,56 @@ export function Projects() {
     {
       title: "Interactive PowerBI Dashboard",
       desc: "Track crucial KPIs with custom DAX measures and advanced data modeling.",
-      image: "https://picsum.photos/seed/pbi/600/400",
-      link: "#"
+      image: "https://picsum.photos/seed/dashboard/600/400",
+      link: "https://github.com/SidEnigma/AdventureWorksDashboard"
     },
     {
       title: "Azure COVID-19 Pipeline",
       desc: "End-to-end data engineering in Azure Data Factory with Databricks integration.",
-      image: "https://picsum.photos/seed/azure/600/400",
-      link: "#"
+      image: "https://picsum.photos/seed/covid/600/400",
+      link: "https://www.linkedin.com/pulse/data-engineering-pipeline-azure-factory-covid-19-project-sahoo-er4he/"
     },
     {
       title: "Airflow Production DAGs",
       desc: "Coding production-grade data pipelines using Airflow for complex ETL flows.",
-      image: "https://picsum.photos/seed/airflow/600/400",
-      link: "#"
+      image: "https://picsum.photos/seed/automation/600/400",
+      link: "https://github.com/SidEnigma/ForexDataPipeline"
     },
     {
       title: "RAG Chain AI Chat",
       desc: "Conversational AI that allows users to chat with any website content via LLMs.",
-      image: "https://picsum.photos/seed/rag/600/400",
-      link: "#"
+      image: "https://picsum.photos/seed/AI/600/400",
+      link: "https://github.com/SidEnigma/Chat-with-websites"
     },
     {
       title: "PubMed Search Engine",
       desc: "LLM-augmented Q&A system for medical literature retrieval.",
       image: "https://picsum.photos/seed/med/600/400",
-      link: "#"
+      link: "https://github.com/SidEnigma/Healthcare-PubMed-Bot"
     },
     {
       title: "Apple Sales Analysis",
       desc: "Using Databricks to create ETL Pipelines with PySpark for market insights.",
-      image: "https://picsum.photos/seed/apple/600/400",
-      link: "#"
+      image: "https://picsum.photos/seed/sales/600/400",
+      link: "https://github.com/SidEnigma/AppleSalesAnalysis"
+    },
+    {
+      title: "Demand Planning Dashboard",
+      desc: "Tableau dashboard to track multi-regional sales for demand planning.",
+      image: "https://picsum.photos/seed/demand/600/400",
+      link: "https://public.tableau.com/app/profile/siddhant.sahoo7639/viz/SalesDashboard_17417975164140/Dashboard1"
+    },
+    {
+      title: "CRM Analysis",
+      desc: "Customer Segmentation and Cohort Analyses in Python for ecommerce businesses.",
+      image: "https://picsum.photos/seed/customer/600/400",
+      link: "https://github.com/SidEnigma/eCommerce-CRM-Analytics"
+    },
+    {
+      title: "GreenifyUp",
+      desc: "Consumption and Nutrition tracking prototype promoting healthier lifestyle.",
+      image: "https://picsum.photos/seed/nutrition/600/400",
+      link: "https://huggingface.co/spaces/SidEnigma/greenifyup"
     }
   ];
 

@@ -8,8 +8,8 @@ import { Quote } from 'lucide-react';
 export function Testimonials() {
   const testimonials = [
     {
-      name: "Dr. Elena Weber",
-      role: "Professor",
+      name: "Amandeep Singh",
+      role: "Data Intelligence Engineer",
       category: "Academic",
       quote: "Siddhant's approach to RAG pipelines was innovative. He has a unique talent for bridging complex AI theory with practical data engineering.",
       image: "https://picsum.photos/seed/t1/100/100"
@@ -22,8 +22,8 @@ export function Testimonials() {
       image: "https://picsum.photos/seed/t2/100/100"
     },
     {
-      name: "Sarah Jenkins",
-      role: "Senior Data Scientist",
+      name: "Shubham Kumar",
+      role: "Assistant Manager",
       category: "Colleague",
       quote: "Collaborating with Siddhant at Deloitte was a highlight. His ETL designs are always scalable, clean, and meticulously documented.",
       image: "https://picsum.photos/seed/t3/100/100"
