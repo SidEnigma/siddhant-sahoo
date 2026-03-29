@@ -33,10 +33,10 @@ export function Hero({ onProgress }: HeroProps) {
 
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
-      img.crossOrigin = "anonymous";
       const frameNum = i.toString().padStart(4, '0');
-      img.src = `${FRAME_BASE_URL}${frameNum}.webp`;
+      const url = `${FRAME_BASE_URL}${frameNum}.webp`;
       
+      // Set handlers BEFORE setting src to avoid race conditions
       img.onload = () => {
         framesCache.current.set(i, img);
         if (i === 1) setFirstFrameLoaded(true);
@@ -44,9 +44,13 @@ export function Hero({ onProgress }: HeroProps) {
       };
       
       img.onerror = () => {
-        console.error(`Failed to load frame ${i}`);
+        console.error(`Failed to load frame ${i} from URL: ${url}`);
         reportProgress(); // Still count to avoid progress hang
       };
+
+      // We remove crossOrigin for now as it can block loading if CORS headers are missing
+      // Since we are only drawing to canvas and not reading pixels, this is safer
+      img.src = url;
     }
   }, [onProgress]);
 
@@ -84,7 +88,7 @@ export function Hero({ onProgress }: HeroProps) {
     if (frame && frame.complete && frame.naturalWidth > 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-    } else if (currentFrame !== 1) {
+    } else {
       // If requested frame isn't ready, try to draw the nearest previous one available
       for (let i = currentFrame - 1; i >= 1; i--) {
         const prevFrame = framesCache.current.get(i);
